@@ -1,0 +1,199 @@
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+-- GUI الرئيسية
+local mainGui = Instance.new("ScreenGui", game.CoreGui)
+mainGui.Name = "MorbenX_GUI"
+
+local mainFrame = Instance.new("Frame", mainGui)
+mainFrame.Size = UDim2.new(0, 250, 0, 160)
+mainFrame.Position = UDim2.new(0.1, 0, 0.4, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 80)
+mainFrame.Active = true
+mainFrame.Draggable = true
+Instance.new("UICorner", mainFrame)
+
+-- زر ESP
+local espEnabled = false
+local espButton = Instance.new("TextButton", mainFrame)
+espButton.Text = "Show ESP"
+espButton.Size = UDim2.new(0, 200, 0, 30)
+espButton.Position = UDim2.new(0, 25, 0, 20)
+espButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+espButton.TextColor3 = Color3.new(0, 0, 0)
+Instance.new("UICorner", espButton)
+
+-- وظيفة ESP
+local function createESP(player)
+if player == LocalPlayer then return end
+local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+if hrp and not hrp:FindFirstChild("ESPBox") then
+local box = Instance.new("BoxHandleAdornment")
+box.Name = "ESPBox"
+box.Adornee = hrp
+box.Size = Vector3.new(4, 6, 4)
+box.AlwaysOnTop = true
+box.ZIndex = 5
+box.Color3 = Color3.new(1, 0, 0)
+box.Transparency = 0.5
+box.Parent = hrp
+end
+end
+
+local function removeESP(player)
+local hrp = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+if hrp then
+for _, adorn in ipairs(hrp:GetChildren()) do
+if adorn:IsA("BoxHandleAdornment") and adorn.Name == "ESPBox" then
+adorn:Destroy()
+end
+end
+end
+end
+
+espButton.MouseButton1Click:Connect(function()
+espEnabled = not espEnabled
+espButton.Text = espEnabled and "Hide ESP" or "Show ESP"
+for _, player in ipairs(Players:GetPlayers()) do
+if player.Character then
+if espEnabled then
+createESP(player)
+else
+removeESP(player)
+end
+end
+end
+end)
+
+-- زر فتح واجهة Aimbot
+local openAimbot = Instance.new("TextButton", mainFrame)
+openAimbot.Text = "Aimbot"
+openAimbot.Size = UDim2.new(0, 200, 0, 30)
+openAimbot.Position = UDim2.new(0, 25, 0, 60)
+openAimbot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+openAimbot.TextColor3 = Color3.new(0, 0, 0)
+Instance.new("UICorner", openAimbot)
+
+-- زر إخفاء الواجهة
+local hideButton = Instance.new("TextButton", mainFrame)
+hideButton.Text = "Hide GUI"
+hideButton.Size = UDim2.new(0, 200, 0, 30)
+hideButton.Position = UDim2.new(0, 25, 0, 100)
+hideButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+hideButton.TextColor3 = Color3.new(0, 0, 0)
+Instance.new("UICorner", hideButton)
+
+-- نافذة التأكيد
+local confirmFrame = Instance.new("Frame", mainGui)
+confirmFrame.Size = UDim2.new(0, 200, 0, 100)
+confirmFrame.Position = UDim2.new(0.15, 0, 0.45, 0)
+confirmFrame.BackgroundColor3 = Color3.fromRGB(60, 0, 0)
+confirmFrame.Visible = false
+confirmFrame.Active = true
+confirmFrame.Draggable = true
+Instance.new("UICorner", confirmFrame)
+
+local confirmLabel = Instance.new("TextLabel", confirmFrame)
+confirmLabel.Text = "Are you sure?"
+confirmLabel.Size = UDim2.new(1, 0, 0.4, 0)
+confirmLabel.BackgroundTransparency = 1
+confirmLabel.TextColor3 = Color3.new(1,1,1)
+
+local confirmYes = Instance.new("TextButton", confirmFrame)
+confirmYes.Text = "Yes"
+confirmYes.Size = UDim2.new(0.45, 0, 0.4, 0)
+confirmYes.Position = UDim2.new(0.05, 0, 0.5, 0)
+confirmYes.BackgroundColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", confirmYes)
+
+local confirmNo = Instance.new("TextButton", confirmFrame)
+confirmNo.Text = "No"
+confirmNo.Size = UDim2.new(0.45, 0, 0.4, 0)
+confirmNo.Position = UDim2.new(0.5, 0, 0.5, 0)
+confirmNo.BackgroundColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", confirmNo)
+
+hideButton.MouseButton1Click:Connect(function()
+confirmFrame.Visible = true
+end)
+
+confirmYes.MouseButton1Click:Connect(function()
+mainFrame.Visible = false
+confirmFrame.Visible = false
+end)
+
+confirmNo.MouseButton1Click:Connect(function()
+confirmFrame.Visible = false
+end)
+
+-- واجهة Aimbot
+local aimbotFrame = Instance.new("Frame", mainGui)
+aimbotFrame.Size = UDim2.new(0, 300, 0, 350)
+aimbotFrame.Position = UDim2.new(0.4, 0, 0.3, 0)
+aimbotFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 100)
+aimbotFrame.Visible = false
+aimbotFrame.Active = true
+aimbotFrame.Draggable = true
+Instance.new("UICorner", aimbotFrame)
+
+local label = Instance.new("TextLabel", aimbotFrame)
+label.Text = "Select a player:"
+label.Size = UDim2.new(1, 0, 0, 30)
+label.BackgroundTransparency = 1
+label.TextColor3 = Color3.new(1,1,1)
+
+local playerList = Instance.new("Frame", aimbotFrame)
+playerList.Size = UDim2.new(1, -20, 0, 230)
+playerList.Position = UDim2.new(0, 10, 0, 40)
+playerList.BackgroundTransparency = 1
+local layout = Instance.new("UIListLayout", playerList)
+layout.Padding = UDim.new(0, 4)
+
+local selectedTarget
+local aiming = false
+
+local aimButton = Instance.new("TextButton", aimbotFrame)
+aimButton.Text = "Toggle Aimbot 🎯"
+aimButton.Size = UDim2.new(1, -40, 0, 40)
+aimButton.Position = UDim2.new(0, 20, 1, -50)
+aimButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+aimButton.TextColor3 = Color3.new(0, 0, 0)
+Instance.new("UICorner", aimButton)
+
+-- تحديث قائمة اللاعبين
+for _, p in pairs(Players:GetPlayers()) do
+if p ~= LocalPlayer then
+local btn = Instance.new("TextButton", playerList)
+btn.Text = p.Name
+btn.Size = UDim2.new(1, 0, 0, 30)
+btn.BackgroundColor3 = Color3.new(1,1,1)
+btn.TextColor3 = Color3.new(0,0,0)
+Instance.new("UICorner", btn)
+
+btn.MouseButton1Click:Connect(function()  
+		selectedTarget = p  
+		label.Text = "Selected: " .. p.Name  
+	end)  
+end
+
+end
+
+aimButton.MouseButton1Click:Connect(function()
+if not selectedTarget then return end
+aiming = not aiming
+if aiming then
+game:GetService("RunService").RenderStepped:Connect(function()
+if aiming and selectedTarget.Character and selectedTarget.Character:FindFirstChild("Head") then
+Camera.CFrame = CFrame.new(Camera.CFrame.Position, selectedTarget.Character.Head.Position)
+end
+end)
+end
+end)
+
+-- زر فتح Aimbot
+openAimbot.MouseButton1Click:Connect(function()
+aimbotFrame.Visible = not aimbotFrame.Visible
+end)
+
